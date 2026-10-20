@@ -1,24 +1,62 @@
-//
-//  ContentView.swift
-//  app prototype
-//
-//  Created by Kapil on 16/10/2026.
-//
-
 import SwiftUI
+import SwiftData
+
+enum AppTab: Hashable {
+    case home
+    case explore
+    case kitchen
+}
 
 struct ContentView: View {
+    @Query(sort: \LocalProfile.createdAt) private var profiles: [LocalProfile]
+    @Environment(\.modelContext) private var modelContext
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            if let profile = profiles.first {
+                MainTabView(profile: profile)
+            } else {
+                WelcomeProfileView()
+            }
         }
-        .padding()
+        .task {
+            SeedData.insertIfNeeded(in: modelContext)
+        }
+        .preferredColorScheme(.light)
+    }
+}
+
+struct MainTabView: View {
+    let profile: LocalProfile
+    @State private var selectedTab = AppTab.home
+    @State private var showProfile = false
+
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            Tab("Home", systemImage: "house.fill", value: .home) {
+                HomeView(
+                    profile: profile,
+                    selectedTab: $selectedTab,
+                    onEditProfile: { showProfile = true }
+                )
+            }
+
+            Tab("Explore", systemImage: "magnifyingglass", value: .explore) {
+                ExploreView()
+            }
+
+            Tab("My Kitchen", systemImage: "books.vertical.fill", value: .kitchen) {
+                MyKitchenView(profile: profile)
+            }
+        }
+        .tint(SavourTheme.forest)
+        .sheet(isPresented: $showProfile) {
+            LocalProfileEditorView(profile: profile)
+        }
     }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: [Recipe.self, LocalProfile.self, ShoppingItem.self, RecipeNote.self], inMemory: true)
 }
