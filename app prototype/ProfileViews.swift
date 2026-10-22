@@ -30,7 +30,7 @@ struct WelcomeProfileView: View {
                     WelcomePrivacyNote()
 
                     Button(action: createProfile) {
-                        Text("Enter Savour")
+                        Text("Enter HeritLink")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
@@ -90,7 +90,7 @@ struct WelcomeBrandHeader: View {
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(SavourTheme.paper, SavourTheme.forest)
 
-            Text("SAVOUR")
+            Text("HeritLink")
                 .font(.caption.weight(.black))
                 .tracking(3)
                 .foregroundStyle(SavourTheme.terracotta)
@@ -319,7 +319,7 @@ struct LocalProfileEditorView: View {
                 }
             }
             .confirmationDialog(
-                "Log out of Savour?",
+                "Log out of HeritLink?",
                 isPresented: $showLogoutConfirmation,
                 titleVisibility: .visible
             ) {

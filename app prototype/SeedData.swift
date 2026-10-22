@@ -139,6 +139,7 @@ enum SeedData {
                 RecipeStep(instruction: "Make five wells and crack in the eggs. Cover and cook until the whites set."),
                 RecipeStep(instruction: "Scatter with parsley and serve with warm bread.")
             ],
+            assetName: "Shakshuka",
             isBuiltIn: true,
             visualSeed: 3
         ),
@@ -165,6 +166,7 @@ enum SeedData {
                 RecipeStep(instruction: "Simmer the sauce for 12 minutes and season with salt."),
                 RecipeStep(instruction: "Warm the tortillas, fill with roasted vegetables and spoon over the green mole.")
             ],
+            assetName: "GreenMoleTacos",
             isBuiltIn: true,
             visualSeed: 4
         ),
@@ -190,6 +192,7 @@ enum SeedData {
                 RecipeStep(instruction: "Fold through spinach, lemon zest and juice."),
                 RecipeStep(instruction: "Finish with crumbled feta, dill and black pepper.")
             ],
+            assetName: "LemonHerbOrzo",
             isBuiltIn: true,
             visualSeed: 5
         ),

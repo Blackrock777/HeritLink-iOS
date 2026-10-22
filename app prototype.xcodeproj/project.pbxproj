@@ -246,7 +246,8 @@
 				DEVELOPMENT_TEAM = 957CG47R75;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Savour uses the camera only to scan recipe QR codes directly from another device.";
+				INFOPLIST_KEY_CFBundleDisplayName = HeritLink;
+				INFOPLIST_KEY_NSCameraUsageDescription = "HeritLink uses the camera only to scan recipe QR codes directly from another device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -279,7 +280,8 @@
 				DEVELOPMENT_TEAM = 957CG47R75;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Savour uses the camera only to scan recipe QR codes directly from another device.";
+				INFOPLIST_KEY_CFBundleDisplayName = HeritLink;
+				INFOPLIST_KEY_NSCameraUsageDescription = "HeritLink uses the camera only to scan recipe QR codes directly from another device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -76,7 +76,7 @@ struct HomeWelcomeHeader: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("SAVOUR")
+                    Text("HeritLink")
                         .font(.caption.weight(.black))
                         .tracking(2.4)
                         .foregroundStyle(SavourTheme.terracotta)

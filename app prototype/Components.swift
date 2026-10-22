@@ -33,9 +33,18 @@ struct RecipeArtwork: View {
                     .resizable()
                     .scaledToFill()
             } else if let assetName {
-                Image(assetName)
-                    .resizable()
-                    .scaledToFill()
+                GeometryReader { geometry in
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFill()
+                        // Keep the skillet in view in the portrait shakshuka photo.
+                        .frame(
+                            width: geometry.size.width,
+                            height: geometry.size.height,
+                            alignment: assetName == "Shakshuka" ? .bottom : .center
+                        )
+                        .clipped()
+                }
             } else {
                 let palette = palettes[abs(seed) % palettes.count]
                 LinearGradient(colors: palette, startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -62,7 +71,7 @@ struct RecipeCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            RecipeArtwork(photoData: recipe.photoData, assetName: recipe.assetName, seed: recipe.visualSeed, height: compact ? 128 : 180)
+            RecipeArtwork(photoData: recipe.photoData, assetName: recipe.assetName, seed: recipe.visualSeed, height: compact ? 150 : 220)
 
             VStack(alignment: .leading, spacing: 7) {
                 Text(recipe.cuisine.uppercased())
@@ -71,9 +80,9 @@ struct RecipeCard: View {
                     .foregroundStyle(SavourTheme.terracotta)
 
                 Text(recipe.title)
-                    .font((compact ? Font.headline : Font.title3).weight(.semibold))
+                    .font(.system(compact ? .headline : .title2, design: .serif, weight: .semibold))
                     .foregroundStyle(SavourTheme.ink)
-                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 RecipeDietBadge(diet: recipe.diet)
 
@@ -84,7 +93,7 @@ struct RecipeCard: View {
                 .font(.caption)
                 .foregroundStyle(SavourTheme.muted)
             }
-            .padding(14)
+            .padding(18)
         }
         .background(SavourTheme.paper)
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))

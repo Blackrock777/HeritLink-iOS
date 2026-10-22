@@ -1,0 +1,48 @@
+{
+  "tool": "built-in image_gen",
+  "style": "Candid home-cooked food, soft window daylight, restrained colors, imperfect plating, realistic textures; landscape 1536x1024; no text or glossy studio finish.",
+  "subjects": [
+    {
+      "name": "GreenMoleTacos",
+      "subject": "Three soft corn tortillas with roasted zucchini and vegetables, generous earthy green tomatillo poblano pumpkin-seed mole, sparse cilantro, no meat or cheese, casually overlapping on a simple ceramic plate.",
+      "status": "Replaced with user-supplied photograph",
+      "asset": "app prototype/Assets.xcassets/GreenMoleTacos.imageset"
+    },
+    {
+      "name": "LemonHerbOrzo",
+      "subject": "Cooked rice-shaped orzo pasta with wilted spinach, irregular crumbled feta, fresh dill and a lemon wedge, in an everyday shallow ceramic bowl.",
+      "status": "Replaced with user-supplied photograph",
+      "asset": "app prototype/Assets.xcassets/LemonHerbOrzo.imageset"
+    },
+    {
+      "name": "Shakshuka",
+      "subject": "Five eggs gently poached in chunky red tomato and pepper sauce with smoked paprika and sparse parsley, in a well-used dark skillet.",
+      "status": "Replaced with user-supplied photograph",
+      "asset": "app prototype/Assets.xcassets/Shakshuka.imageset"
+    },
+    {
+      "name": "TuscanStew",
+      "subject": "Tuscan cannellini white bean stew with wilted dark kale and rosemary in a modest ceramic soup bowl, thick brothy consistency.",
+      "status": "Generated image in use",
+      "asset": "app prototype/Assets.xcassets/TuscanStew.imageset"
+    },
+    {
+      "name": "MisoUdon",
+      "subject": "Thick Japanese udon noodles coated lightly in miso butter with chopped scallions and a lime wedge, in a simple everyday Japanese ceramic bowl. No egg or meat.",
+      "status": "Replaced with user-supplied photograph",
+      "asset": "app prototype/Assets.xcassets/MisoUdon.imageset"
+    },
+    {
+      "name": "ChanaMasala",
+      "subject": "Indian chana masala, chickpeas in a thick tomato onion spice gravy, a few coriander leaves, in a modest steel serving bowl.",
+      "status": "Generated image in use",
+      "asset": "app prototype/Assets.xcassets/ChanaMasala.imageset"
+    },
+    {
+      "name": "Bibimbap",
+      "subject": "Korean vegetable bibimbap in a ceramic bowl, rice with cooked carrot, zucchini, spinach, shiitake mushrooms, bean sprouts, kimchi and a single fried egg with gochujang. No meat.",
+      "status": "Generated image in use",
+      "asset": "app prototype/Assets.xcassets/Bibimbap.imageset"
+    }
+  ]
+}

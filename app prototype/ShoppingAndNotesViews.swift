@@ -10,7 +10,7 @@ struct ShoppingListView: View {
     private var remaining: [ShoppingItem] { items.filter { !$0.isChecked } }
     private var checked: [ShoppingItem] { items.filter(\.isChecked) }
     private var shareText: String {
-        "Savour shopping list\n\n" + remaining.map {
+        "HeritLink shopping list\n\n" + remaining.map {
             let source = $0.recipeTitle.isEmpty ? "" : " — \($0.recipeTitle)"
             return "☐ \($0.quantity) \($0.name)\(source)"
         }.joined(separator: "\n")

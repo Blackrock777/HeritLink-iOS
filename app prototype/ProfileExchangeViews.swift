@@ -105,7 +105,7 @@ struct KitchenShareCard: View {
                             .frame(maxWidth: 300).padding(20)
                             .background(.white, in: RoundedRectangle(cornerRadius: 20))
                             .accessibilityLabel("Offline kitchen QR code for \(transfer.name)")
-                        Text("In Savour, open My Kitchen → Import → Scan QR. Both phones can be offline.")
+                        Text("In HeritLink, open My Kitchen → Import → Scan QR. Both phones can be offline.")
                             .font(.subheadline).multilineTextAlignment(.center)
                     } else {
                         Label("Use a file for this kitchen", systemImage: "doc")
@@ -136,7 +136,7 @@ struct KitchenShareCard: View {
                 do {
                     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
                     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-                    let url = directory.appendingPathComponent("Savour Kitchen.json")
+                    let url = directory.appendingPathComponent("HeritLink Kitchen.json")
                     try transfer.encoded().write(to: url, options: .atomic)
                     fileURL = url
                 } catch {

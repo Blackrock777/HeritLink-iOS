@@ -151,13 +151,13 @@ struct MyKitchenView: View {
                 importTransfer(try RecipeTransfer.decode(data))
             }
         } catch {
-            importMessage = "That file could not be read as a supported Savour recipe or kitchen."
+            importMessage = "That file could not be read as a supported HeritLink recipe or kitchen."
         }
     }
 
     private func importTransfer(_ transfer: RecipeTransfer) {
         guard transfer.formatVersion <= RecipeTransfer.formatVersion else {
-            importMessage = "This recipe was made by a newer version of Savour."
+            importMessage = "This recipe was made by a newer version of HeritLink."
             return
         }
         modelContext.insert(transfer.makeRecipe())
@@ -235,7 +235,7 @@ struct RecipeExchangeView: View {
                             .padding(18)
                             .background(.white, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
                             .accessibilityLabel("QR code for \(recipe.title)")
-                        Text("Point another iPhone’s Savour scanner here.")
+                        Text("Point another iPhone’s HeritLink scanner here.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
@@ -315,7 +315,7 @@ struct ActivityView: UIViewControllerRepresentable {
 
 struct RecipeScannerView: View {
     let onImport: (RecipeTransfer) -> Void
-    @State private var message = "Center a Savour QR code in the frame."
+    @State private var message = "Center a HeritLink QR code in the frame."
     @State private var isScanning = true
     @State private var receivedKitchen: KitchenTransfer?
     @Environment(\.dismiss) private var dismiss
@@ -373,7 +373,7 @@ struct RecipeScannerView: View {
             guard payload.utf8.count <= 2_200,
                   let data = Data(base64Encoded: String(payload.dropFirst(9))),
                   let kitchen = try? KitchenTransfer.decode(data) else {
-                message = "This kitchen code is invalid or needs a newer version of Savour."
+                message = "This kitchen code is invalid or needs a newer version of HeritLink."
                 return
             }
             isScanning = false
@@ -383,7 +383,7 @@ struct RecipeScannerView: View {
         guard payload.hasPrefix("SAVOUR1:"),
               let data = Data(base64Encoded: String(payload.dropFirst(8))),
               let transfer = try? RecipeTransfer.decode(data) else {
-            message = "That isn’t a supported Savour QR code."
+            message = "That isn’t a supported HeritLink QR code."
             return
         }
         isScanning = false
