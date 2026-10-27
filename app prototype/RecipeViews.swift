@@ -33,10 +33,10 @@ struct RecipeDetailView: View {
                 PersonalRecipeNotesView(recipeID: recipe.id, isEditing: $isEditingNote)
                 RecipeInstructionsSection(steps: recipe.steps)
                 if !recipe.story.isEmpty {
-                    RecipeStorySection(story: recipe.story)
+                    RecipeStorySection(story: recipe.story, isBuiltIn: recipe.isBuiltIn)
                 }
             }
-            .padding(.bottom, 110)
+            .padding(.bottom, 24)
         }
         .savourBackground()
         .ignoresSafeArea(edges: .top)
@@ -188,10 +188,11 @@ struct RecipeInstructionsSection: View {
 
 struct RecipeStorySection: View {
     let story: String
+    let isBuiltIn: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeading(eyebrow: "From the table", title: "The story")
+            SectionHeading(eyebrow: "From the table", title: isBuiltIn ? "Behind the dish" : "The story")
             Text(story)
                 .font(.body.italic())
                 .foregroundStyle(SavourTheme.muted)
@@ -206,9 +207,22 @@ struct RecipeStorySection: View {
 struct CookingModeView: View {
     let recipe: Recipe
     @State private var stepIndex = 0
+    @State private var showIngredients = false
+    @State private var showTerms = false
     @Environment(\.dismiss) private var dismiss
 
     private var steps: [RecipeStep] { recipe.steps }
+    private var currentStep: RecipeStep? {
+        steps.indices.contains(stepIndex) ? steps[stepIndex] : nil
+    }
+    private var displayedStep: Int { currentStep == nil ? 0 : stepIndex + 1 }
+    private var isLastStep: Bool { steps.isEmpty || stepIndex >= steps.count - 1 }
+    private var instruction: String {
+        guard let currentStep else { return "No cooking steps are available for this recipe." }
+        return currentStep.instruction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "This step has no instructions. Continue when you’re ready."
+            : currentStep.instruction
+    }
 
     var body: some View {
         ZStack {
@@ -217,35 +231,49 @@ struct CookingModeView: View {
                 HStack {
                     Button("Close", systemImage: "xmark") { dismiss() }
                     Spacer()
-                    Text("\(stepIndex + 1) of \(steps.count)")
+                    Text("\(displayedStep) of \(steps.count)")
                         .font(.subheadline.monospacedDigit())
                 }
                 .foregroundStyle(.white.opacity(0.9))
                 .padding()
 
-                ProgressView(value: Double(stepIndex + 1), total: Double(max(steps.count, 1)))
+                ProgressView(value: Double(displayedStep), total: Double(max(steps.count, 1)))
                     .tint(Color(red: 0.90, green: 0.68, blue: 0.30))
                     .padding(.horizontal)
 
-                Spacer()
-
-                VStack(spacing: 24) {
-                    Text("STEP \(stepIndex + 1)")
-                        .font(.caption.weight(.bold))
-                        .tracking(2)
-                        .foregroundStyle(Color(red: 0.90, green: 0.68, blue: 0.30))
-                    Text(steps.indices.contains(stepIndex) ? steps[stepIndex].instruction : "Enjoy your meal.")
-                        .font(.system(.title, design: .rounded, weight: .semibold))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(7)
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText())
-                        .id(stepIndex)
-                        .transition(.opacity.combined(with: .move(edge: .trailing)))
+                ViewThatFits(in: .horizontal) {
+                    HStack {
+                        Button("Ingredients", systemImage: "list.bullet") { showIngredients = true }
+                        Button("Cooking terms", systemImage: "questionmark.circle") { showTerms = true }
+                    }
+                    VStack {
+                        Button("Ingredients", systemImage: "list.bullet") { showIngredients = true }
+                        Button("Cooking terms", systemImage: "questionmark.circle") { showTerms = true }
+                    }
                 }
-                .padding(30)
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .tint(.white)
+                .padding()
 
-                Spacer()
+                ScrollView {
+                    VStack(spacing: 24) {
+                        Text(currentStep == nil ? "NO STEPS" : "STEP \(displayedStep)")
+                            .font(.caption.weight(.bold))
+                            .tracking(2)
+                            .foregroundStyle(Color(red: 0.90, green: 0.68, blue: 0.30))
+                        Text(instruction)
+                            .font(.system(.title, design: .rounded, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(7)
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText())
+                            .id(stepIndex)
+                            .transition(.opacity.combined(with: .move(edge: .trailing)))
+                    }
+                    .padding(30)
+                }
+                .frame(maxHeight: .infinity)
 
                 HStack(spacing: 14) {
                     Button {
@@ -255,16 +283,17 @@ struct CookingModeView: View {
                             .frame(width: 56, height: 56)
                             .background(.white.opacity(0.12), in: Circle())
                     }
-                    .disabled(stepIndex == 0)
+                    .disabled(stepIndex == 0 || currentStep == nil)
+                    .accessibilityLabel("Previous step")
 
                     Button {
-                        if stepIndex == steps.count - 1 {
+                        if isLastStep {
                             dismiss()
                         } else {
                             withAnimation { stepIndex += 1 }
                         }
                     } label: {
-                        Text(stepIndex == steps.count - 1 ? "Finish" : "Next step")
+                        Text(steps.isEmpty ? "Done" : (isLastStep ? "Finish" : "Next step"))
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(Color(red: 0.90, green: 0.68, blue: 0.30), in: Capsule())
@@ -275,6 +304,53 @@ struct CookingModeView: View {
                 .foregroundStyle(.white)
                 .padding(20)
             }
+        }
+        .sheet(isPresented: $showIngredients) {
+            NavigationStack {
+                ScrollView {
+                    if recipe.ingredients.isEmpty {
+                        Text("No ingredients listed for this recipe.").padding()
+                    } else {
+                        RecipeIngredientsSection(ingredients: recipe.ingredients)
+                            .padding(.vertical)
+                    }
+                }
+                .savourBackground()
+                .navigationTitle("Ingredients")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showIngredients = false }
+                    }
+                }
+            }
+            .tint(SavourTheme.forest)
+        }
+        .sheet(isPresented: $showTerms) {
+            NavigationStack {
+                List {
+                    Section("Sauté") {
+                        Text("Cook in a little oil or butter over medium to high heat, stirring or tossing regularly.")
+                    }
+                    Section("Simmer") {
+                        Text("Cook liquid gently with small bubbles breaking the surface occasionally. Lower the heat if it bubbles vigorously.")
+                    }
+                    Section("Boil") {
+                        Text("Heat liquid until large bubbles rise continuously and break at the surface.")
+                    }
+                    Section("Fold") {
+                        Text("Gently lift the mixture from the bottom over the top with a spatula, turning the bowl as you go.")
+                    }
+                }
+                .navigationTitle("Cooking terms")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showTerms = false }
+                    }
+                }
+            }
+            .tint(SavourTheme.forest)
         }
         .interactiveDismissDisabled()
     }

@@ -29,13 +29,28 @@ struct MyKitchenView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                Button { showKitchenShare = true } label: {
-                    Label("Share my kitchen", systemImage: "qrcode")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                HStack(spacing: 12) {
+                    Button { showKitchenShare = true } label: {
+                        Label("Share recipes", systemImage: "qrcode")
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, minHeight: 44, maxHeight: .infinity)
+                    }
+
+                    Menu {
+                        Button("Import file", systemImage: "doc.badge.plus") { showImporter = true }
+                        Button("Scan QR", systemImage: "qrcode.viewfinder") { showScanner = true }
+                    } label: {
+                        Label("Import recipes", systemImage: "square.and.arrow.down")
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, minHeight: 44, maxHeight: .infinity)
+                    }
                 }
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .buttonStyle(.bordered)
                 .tint(SavourTheme.forest)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 20)
 
                 Picker("Collection", selection: $segment) {
                     ForEach(KitchenSegment.allCases) { Text($0.rawValue).tag($0) }
@@ -65,14 +80,6 @@ struct MyKitchenView: View {
             .savourBackground()
             .navigationTitle("My Kitchen")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Button("Import file", systemImage: "doc.badge.plus") { showImporter = true }
-                        Button("Scan QR", systemImage: "qrcode.viewfinder") { showScanner = true }
-                    } label: {
-                        Label("Import", systemImage: "square.and.arrow.down")
-                    }
-                }
                 ToolbarItemGroup(placement: .primaryAction) {
                     NavigationLink {
                         ShoppingListView()

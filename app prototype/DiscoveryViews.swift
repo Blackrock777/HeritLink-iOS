@@ -5,6 +5,7 @@ struct HomeView: View {
     @Query(sort: \Recipe.title) private var recipes: [Recipe]
     let profile: LocalProfile
     @Binding var selectedTab: AppTab
+    @Binding var requestedCuisine: String?
     let onEditProfile: () -> Void
 
     private var featured: Recipe? { recipes.first(where: { $0.title == "Tuscan White Bean Stew" }) ?? recipes.first }
@@ -32,7 +33,8 @@ struct HomeView: View {
                         .buttonStyle(.plain)
                     }
 
-                    CuisineStrip(cuisines: cuisines) { _ in
+                    CuisineStrip(cuisines: cuisines) { cuisine in
+                        requestedCuisine = cuisine
                         selectedTab = .explore
                     }
 
@@ -95,6 +97,10 @@ struct HomeWelcomeHeader: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Open local profile")
             }
+
+            Text("Discover cultures through food. Learn to cook, one recipe at a time.")
+                .font(.subheadline)
+                .foregroundStyle(SavourTheme.muted)
 
             Button(action: onSearch) {
                 HStack {
@@ -181,8 +187,10 @@ struct CuisineStrip: View {
 }
 
 struct ExploreView: View {
+    @Binding var requestedCuisine: String?
     @Query(sort: \Recipe.title) private var recipes: [Recipe]
     @State private var searchText = ""
+    @State private var path: [Recipe] = []
     @State private var cuisine = "All"
     @State private var difficulty: RecipeDifficulty?
     @State private var diet: RecipeDiet?
@@ -193,7 +201,7 @@ struct ExploreView: View {
     private var cuisines: [String] { ["All"] + Array(Set(recipes.map(\.cuisine))).sorted() }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 LazyVStack(spacing: 18) {
                     ExploreFilterBar(
@@ -202,6 +210,14 @@ struct ExploreView: View {
                         activeFilterCount: (difficulty == nil ? 0 : 1) + (maxMinutes < 180 ? 1 : 0) + (diet == nil ? 0 : 1),
                         showFilters: $showFilters
                     )
+
+                    if cuisine != "All" || difficulty != nil || diet != nil || maxMinutes < 180 {
+                        Button("Clear all filters", systemImage: "xmark.circle") {
+                            resetFilters()
+                        }
+                        .frame(minHeight: 44)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     if let diet {
                         RecipeDietBadge(diet: diet)
@@ -213,7 +229,7 @@ struct ExploreView: View {
                             message: "Try a different food category, cuisine, ingredient or cooking time.",
                             systemImage: "fork.knife"
                         )
-                        .frame(minHeight: 380)
+                        .padding(.vertical, 24)
                     } else {
                         ForEach(filteredRecipes) { recipe in
                             NavigationLink(value: recipe) {
@@ -229,7 +245,7 @@ struct ExploreView: View {
             .savourBackground()
             .navigationTitle("Explore")
             .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $searchText, prompt: "Recipe or ingredient")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Recipe, cuisine or ingredient")
             .sheet(isPresented: $showFilters) {
                 FilterSheet(difficulty: $difficulty, maxMinutes: $maxMinutes, diet: $diet)
                     .presentationDetents([.medium, .large])
@@ -237,7 +253,11 @@ struct ExploreView: View {
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
             }
-            .onAppear(perform: recompute)
+            .onAppear {
+                applyRequestedCuisine()
+                recompute()
+            }
+            .onChange(of: requestedCuisine) { applyRequestedCuisine() }
             .onChange(of: recipes.map(\.updatedAt)) { recompute() }
             .onChange(of: recipes.map(\.dietRawValue)) { recompute() }
             .onChange(of: searchText) { recompute() }
@@ -246,6 +266,23 @@ struct ExploreView: View {
             .onChange(of: diet) { recompute() }
             .onChange(of: maxMinutes) { recompute() }
         }
+    }
+
+    private func resetFilters() {
+        cuisine = "All"
+        difficulty = nil
+        diet = nil
+        maxMinutes = 180
+    }
+
+    private func applyRequestedCuisine() {
+        guard let requestedCuisine else { return }
+        path.removeAll()
+        resetFilters()
+        searchText = ""
+        cuisine = requestedCuisine
+        self.requestedCuisine = nil
+        recompute()
     }
 
     private func recompute() {

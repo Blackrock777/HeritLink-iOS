@@ -30,6 +30,7 @@ struct MainTabView: View {
     let profile: LocalProfile
     @State private var selectedTab = AppTab.home
     @State private var showProfile = false
+    @State private var requestedCuisine: String?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -37,12 +38,13 @@ struct MainTabView: View {
                 HomeView(
                     profile: profile,
                     selectedTab: $selectedTab,
+                    requestedCuisine: $requestedCuisine,
                     onEditProfile: { showProfile = true }
                 )
             }
 
             Tab("Explore", systemImage: "magnifyingglass", value: .explore) {
-                ExploreView()
+                ExploreView(requestedCuisine: $requestedCuisine)
             }
 
             Tab("My Kitchen", systemImage: "books.vertical.fill", value: .kitchen) {
